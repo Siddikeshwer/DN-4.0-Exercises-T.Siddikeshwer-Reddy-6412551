@@ -1,91 +1,107 @@
+using System;
+using System.Collections.Generic;
 
-// StockMarket.java
-import java.util.ArrayList;
-import java.util.List;
+// IObserver.cs
+public interface IObserver
+{
+    void Update(string stock, double price);
+}
 
-class StockMarket implements Stock {
-    private List<Observer> observers;
-    private String stock;
-    private double price;
-    
-    public StockMarket() {
-        observers = new ArrayList<>();
+// IStock.cs
+public interface IStock
+{
+    void RegisterObserver(IObserver observer);
+    void DeregisterObserver(IObserver observer);
+    void NotifyObservers();
+}
+
+// StockMarket.cs
+public class StockMarket : IStock
+{
+    private readonly List<IObserver> _observers;
+    private string _stock;
+    private double _price;
+
+    public StockMarket()
+    {
+        _observers = new List<IObserver>();
     }
-    
-    @Override
-    public void registerObserver(Observer observer) {
-        observers.add(observer);
-    }
-    
-    @Override
-    public void deregisterObserver(Observer observer) {
-        observers.remove(observer);
-    }
-    
-    @Override
-    public void notifyObservers() {
-        for (Observer observer : observers) {
-            observer.update(stock, price);
+
+    public void RegisterObserver(IObserver observer)
+    {
+        if (observer != null)
+        {
+            _observers.Add(observer);
         }
     }
-    
-    public void setStockPrice(String stock, double price) {
-        this.stock = stock;
-        this.price = price;
-        notifyObservers();
+
+    public void DeregisterObserver(IObserver observer)
+    {
+        _observers.Remove(observer);
+    }
+
+    public void NotifyObservers()
+    {
+        foreach (var observer in _observers)
+        {
+            observer.Update(_stock, _price);
+        }
+    }
+
+    public void SetStockPrice(string stock, double price)
+    {
+        _stock = stock;
+        _price = price;
+        NotifyObservers();
     }
 }
 
-// MobileApp.java
-public class MobileApp implements Observer {
-    private String name;
-    
-    public MobileApp(String name) {
-        this.name = name;
+// MobileApp.cs
+public class MobileApp : IObserver
+{
+    private readonly string _name;
+
+    public MobileApp(string name)
+    {
+        _name = name;
     }
-    
-    @Override
-    public void update(String stock, double price) {
-        System.out.println(name + " received update: " + stock + " price is now $" + price);
+
+    public void Update(string stock, double price)
+    {
+        Console.WriteLine($"{_name} received update: {stock} price is now ${price}");
     }
 }
 
-// WebApp.java
-class WebApp implements Observer {
-    private String name;
-    
-    public WebApp(String name) {
-        this.name = name;
+// WebApp.cs
+public class WebApp : IObserver
+{
+    private readonly string _name;
+
+    public WebApp(string name)
+    {
+        _name = name;
     }
-    
-    @Override
-    public void update(String stock, double price) {
-        System.out.println(name + " received update: " + stock + " price is now $" + price);
+
+    public void Update(string stock, double price)
+    {
+        Console.WriteLine($"{_name} received update: {stock} price is now ${price}");
     }
 }
 
-// ObserverTest.java
-class ObserverTest {
-    public static void main(String[] args) {
+// Program.cs
+public class Program
+{
+    public static void Main(string[] args)
+    {
         StockMarket stockMarket = new StockMarket();
-        
-        Observer mobileApp = new MobileApp("MobileApp1");
-        Observer webApp = new WebApp("WebApp1");
-        
-        stockMarket.registerObserver(mobileApp);
-        stockMarket.registerObserver(webApp);
-        
-        stockMarket.setStockPrice("AAPL", 150.0);
-        stockMarket.setStockPrice("GOOG", 2700.0);
-    }
-}
 
-// Observer.java
-interface Observer {
-    void update(String stock, double price);
-}
-interface Stock {
-    void registerObserver(Observer observer);
-    void deregisterObserver(Observer observer);
-    void notifyObservers();
+        IObserver mobileApp = new MobileApp("MobileApp1");
+        IObserver webApp = new WebApp("WebApp1");
+
+        stockMarket.RegisterObserver(mobileApp);
+        stockMarket.RegisterObserver(webApp);
+
+        stockMarket.SetStockPrice("AAPL", 150.0);
+        stockMarket.SetStockPrice("GOOG", 2700.0);
+    }
 }
