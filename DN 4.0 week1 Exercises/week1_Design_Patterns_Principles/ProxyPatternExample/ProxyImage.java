@@ -1,50 +1,65 @@
-interface Image {
-    void display();
+using System;
+
+// IImage.cs
+public interface IImage
+{
+    void Display();
 }
 
-class RealImage implements Image {
-    private String filename;
-    
-    public RealImage(String filename) {
-        this.filename = filename;
-        loadFromDisk();
+// RealImage.cs
+public class RealImage : IImage
+{
+    private readonly string _filename;
+
+    public RealImage(string filename)
+    {
+        _filename = filename;
+        LoadFromDisk();
     }
-    
-    private void loadFromDisk() {
-        System.out.println("Loading " + filename);
+
+    private void LoadFromDisk()
+    {
+        Console.WriteLine($"Loading {_filename}");
     }
-    
-    @Override
-    public void display() {
-        System.out.println("Displaying " + filename);
+
+    public void Display()
+    {
+        Console.WriteLine($"Displaying {_filename}");
     }
 }
 
-public class ProxyImage implements Image {
-    private RealImage realImage;
-    private String filename;
-    
-    public ProxyImage(String filename) {
-        this.filename = filename;
+// ProxyImage.cs
+public class ProxyImage : IImage
+{
+    private RealImage _realImage;
+    private readonly string _filename;
+
+    public ProxyImage(string filename)
+    {
+        _filename = filename;
     }
-    
-    @Override
-    public void display() {
-        if (realImage == null) {
-            realImage = new RealImage(filename);
+
+    public void Display()
+    {
+        if (_realImage == null)
+        {
+            _realImage = new RealImage(_filename);
         }
-        realImage.display();
+        _realImage.Display();
     }
 }
 
-class ProxyTest {
-    public static void main(String[] args) {
-        Image image = new ProxyImage("test_image.jpg");
-        
+// Program.cs
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        IImage image = new ProxyImage("test_image.jpg");
+
         // Image will be loaded from disk
-        image.display();
-        
+        image.Display();
+
         // Image will not be loaded from disk
-        image.display();
+        image.Display();
     }
 }
