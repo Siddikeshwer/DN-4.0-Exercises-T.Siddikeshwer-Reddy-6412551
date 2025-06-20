@@ -1,57 +1,57 @@
-// PaymentProcessor.java
-interface PaymentProcessor {
-    void processPayment(double amount);
+using System;
+
+// PaymentProcessor.cs
+public interface IPaymentProcessor {
+    void ProcessPayment(double amount);
 }
 
-// PayPal.java
-class PayPal {
-    public void sendPayment(double amount) {
-        System.out.println("Processing payment of $" + amount + " through PayPal");
+// PayPal.cs
+public class PayPal {
+    public void SendPayment(double amount) {
+        Console.WriteLine($"Processing payment of ${amount} through PayPal");
     }
 }
 
-// Stripe.java
-class Stripe {
-    public void makePayment(double amount) {
-        System.out.println("Processing payment of $" + amount + " through Stripe");
+// Stripe.cs
+public class Stripe {
+    public void MakePayment(double amount) {
+        Console.WriteLine($"Processing payment of ${amount} through Stripe");
     }
 }
 
-// PayPalAdapter.java
- class PayPalAdapter implements PaymentProcessor {
-    private PayPal payPal;
-    
+// PayPalAdapter.cs
+public class PayPalAdapter : IPaymentProcessor {
+    private readonly PayPal _payPal;
+
     public PayPalAdapter(PayPal payPal) {
-        this.payPal = payPal;
+        _payPal = payPal;
     }
-    
-    @Override
-    public void processPayment(double amount) {
-        payPal.sendPayment(amount);
+
+    public void ProcessPayment(double amount) {
+        _payPal.SendPayment(amount);
     }
 }
 
-// StripeAdapter.java
-public class StripeAdapter implements PaymentProcessor {
-    private Stripe stripe;
-    
+// StripeAdapter.cs
+public class StripeAdapter : IPaymentProcessor {
+    private readonly Stripe _stripe;
+
     public StripeAdapter(Stripe stripe) {
-        this.stripe = stripe;
+        _stripe = stripe;
     }
-    
-    @Override
-    public void processPayment(double amount) {
-        stripe.makePayment(amount);
+
+    public void ProcessPayment(double amount) {
+        _stripe.MakePayment(amount);
     }
 }
 
-// AdapterTest.java
-class AdapterTest {
-    public static void main(String[] args) {
-        PaymentProcessor paypalProcessor = new PayPalAdapter(new PayPal());
-        paypalProcessor.processPayment(100.0);
-        
-        PaymentProcessor stripeProcessor = new StripeAdapter(new Stripe());
-        stripeProcessor.processPayment(200.0);
+// Program.cs
+public class Program {
+    public static void Main(string[] args) {
+        IPaymentProcessor paypalProcessor = new PayPalAdapter(new PayPal());
+        paypalProcessor.ProcessPayment(100.0);
+
+        IPaymentProcessor stripeProcessor = new StripeAdapter(new Stripe());
+        stripeProcessor.ProcessPayment(200.0);
     }
 }
