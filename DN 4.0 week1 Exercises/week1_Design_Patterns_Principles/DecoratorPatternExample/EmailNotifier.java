@@ -1,57 +1,73 @@
-interface Notifier {
-    void send(String message);
+using System;
+
+// Notifier.cs
+public interface INotifier
+{
+    void Send(string message);
 }
 
-public class EmailNotifier implements Notifier {
-    @Override
-    public void send(String message) {
-        System.out.println("Sending email notification: " + message);
-    }
-}
-
-abstract class NotifierDecorator implements Notifier {
-    protected Notifier notifier;
-    
-    public NotifierDecorator(Notifier notifier) {
-        this.notifier = notifier;
-    }
-    
-    @Override
-    public void send(String message) {
-        notifier.send(message);
+// EmailNotifier.cs
+public class EmailNotifier : INotifier
+{
+    public void Send(string message)
+    {
+        Console.WriteLine($"Sending email notification: {message}");
     }
 }
 
-class SMSNotifierDecorator extends NotifierDecorator {
-    public SMSNotifierDecorator(Notifier notifier) {
-        super(notifier);
+// NotifierDecorator.cs
+public abstract class NotifierDecorator : INotifier
+{
+    protected readonly INotifier _notifier;
+
+    public NotifierDecorator(INotifier notifier)
+    {
+        _notifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
     }
-    
-    @Override
-    public void send(String message) {
-        super.send(message);
-        System.out.println("Sending SMS notification: " + message);
+
+    public virtual void Send(string message)
+    {
+        _notifier.Send(message);
     }
 }
 
-class SlackNotifierDecorator extends NotifierDecorator {
-    public SlackNotifierDecorator(Notifier notifier) {
-        super(notifier);
+// SMSNotifierDecorator.cs
+public class SMSNotifierDecorator : NotifierDecorator
+{
+    public SMSNotifierDecorator(INotifier notifier) : base(notifier)
+    {
     }
-    
-    @Override
-    public void send(String message) {
-        super.send(message);
-        System.out.println("Sending Slack notification: " + message);
+
+    public override void Send(string message)
+    {
+        base.Send(message);
+        Console.WriteLine($"Sending SMS notification: {message}");
     }
 }
 
-class DecoratorTest {
-    public static void main(String[] args) {
-        Notifier emailNotifier = new EmailNotifier();
-        Notifier smsNotifier = new SMSNotifierDecorator(emailNotifier);
-        Notifier slackNotifier = new SlackNotifierDecorator(smsNotifier);
-        
-        slackNotifier.send("Hello, this is a notification!");
+// SlackNotifierDecorator.cs
+public class SlackNotifierDecorator : NotifierDecorator
+{
+    public SlackNotifierDecorator(INotifier notifier) : base(notifier)
+    {
+    }
+
+    public override void Send(string message)
+    {
+        base.Send(message);
+        Console.WriteLine($"Sending Slack notification: {message}");
+    }
+}
+
+// Program.cs
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        INotifier emailNotifier = new EmailNotifier();
+        INotifier smsNotifier = new SMSNotifierDecorator(emailNotifier);
+        INotifier slackNotifier = new SlackNotifierDecorator(smsNotifier);
+
+        slackNotifier.Send("Hello, this is a notification!");
     }
 }
