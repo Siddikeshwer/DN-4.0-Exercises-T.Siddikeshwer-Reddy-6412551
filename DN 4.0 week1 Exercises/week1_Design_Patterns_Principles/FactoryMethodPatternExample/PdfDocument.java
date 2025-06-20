@@ -1,65 +1,86 @@
-interface Document {
-    void open();
+using System;
+
+// IDocument.cs
+public interface IDocument
+{
+    void Open();
 }
 
-class WordDocument implements Document {
-    @Override
-    public void open() {
-        System.out.println("Opening Word document");
+// WordDocument.cs
+public class WordDocument : IDocument
+{
+    public void Open()
+    {
+        Console.WriteLine("Opening Word document");
     }
 }
 
-public class PdfDocument implements Document {
-    @Override
-    public void open() {
-        System.out.println("Opening PDF document");
+// PdfDocument.cs
+public class PdfDocument : IDocument
+{
+    public void Open()
+    {
+        Console.WriteLine("Opening PDF document");
     }
 }
 
-class ExcelDocument implements Document {
-    @Override
-    public void open() {
-        System.out.println("Opening Excel document");
+// ExcelDocument.cs
+public class ExcelDocument : IDocument
+{
+    public void Open()
+    {
+        Console.WriteLine("Opening Excel document");
     }
 }
 
-abstract class DocumentFactory {
-    public abstract Document createDocument();
+// DocumentFactory.cs
+public abstract class DocumentFactory
+{
+    public abstract IDocument CreateDocument();
 }
 
-class WordDocumentFactory extends DocumentFactory {
-    @Override
-    public Document createDocument() {
+// WordDocumentFactory.cs
+public class WordDocumentFactory : DocumentFactory
+{
+    public override IDocument CreateDocument()
+    {
         return new WordDocument();
     }
 }
 
-class PdfDocumentFactory extends DocumentFactory {
-    @Override
-    public Document createDocument() {
+// PdfDocumentFactory.cs
+public class PdfDocumentFactory : DocumentFactory
+{
+    public override IDocument CreateDocument()
+    {
         return new PdfDocument();
     }
 }
 
-class ExcelDocumentFactory extends DocumentFactory {
-    @Override
-    public Document createDocument() {
+// ExcelDocumentFactory.cs
+public class ExcelDocumentFactory : DocumentFactory
+{
+    public override IDocument CreateDocument()
+    {
         return new ExcelDocument();
     }
 }
 
-class FactoryMethodTest {
-    public static void main(String[] args) {
+// Program.cs
+public class Program
+{
+    public static void Main(string[] args)
+    {
         DocumentFactory wordFactory = new WordDocumentFactory();
-        Document wordDoc = wordFactory.createDocument();
-        wordDoc.open();
-        
+        IDocument wordDoc = wordFactory.CreateDocument();
+        wordDoc.Open();
+
         DocumentFactory pdfFactory = new PdfDocumentFactory();
-        Document pdfDoc = pdfFactory.createDocument();
-        pdfDoc.open();
-        
+        IDocument pdfDoc = pdfFactory.CreateDocument();
+        pdfDoc.Open();
+
         DocumentFactory excelFactory = new ExcelDocumentFactory();
-        Document excelDoc = excelFactory.createDocument();
-        excelDoc.open();
+        IDocument excelDoc = excelFactory.CreateDocument();
+        excelDoc.Open();
     }
 }
