@@ -1,69 +1,83 @@
-import java.util.HashMap;
-import java.util.Map;
+using System;
+using System.Collections.Generic;
 
-interface CustomerRepository {
-    Customer findCustomerById(int id);
+// ICustomerRepository.cs
+public interface ICustomerRepository
+{
+    Customer FindCustomerById(int id);
 }
 
-class CustomerRepositoryImpl implements CustomerRepository {
-    private Map<Integer, Customer> customerDatabase;
-    
-    public CustomerRepositoryImpl() {
-        customerDatabase = new HashMap<>();
-        customerDatabase.put(1, new Customer(1, "John Doe"));
-        customerDatabase.put(2, new Customer(2, "Jane Smith"));
-    }
-    
-    @Override
-    public Customer findCustomerById(int id) {
-        return customerDatabase.get(id);
-    }
-}
+// CustomerRepositoryImpl.cs
+public class CustomerRepositoryImpl : ICustomerRepository
+{
+    private readonly Dictionary<int, Customer> _customerDatabase;
 
-class CustomerService {
-    private CustomerRepository customerRepository;
-    
-    public CustomerService(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
+    public CustomerRepositoryImpl()
+    {
+        _customerDatabase = new Dictionary<int, Customer>
+        {
+            { 1, new Customer(1, "John Doe") },
+            { 2, new Customer(2, "Jane Smith") }
+        };
     }
-    
-    public Customer getCustomerById(int id) {
-        return customerRepository.findCustomerById(id);
+
+    public Customer FindCustomerById(int id)
+    {
+        _customerDatabase.TryGetValue(id, out var customer);
+        return customer;
     }
 }
 
-class Customer {
-    private int id;
-    private String name;
-    
-    public Customer(int id, String name) {
-        this.id = id;
-        this.name = name;
+// CustomerService.cs
+public class CustomerService
+{
+    private readonly ICustomerRepository _customerRepository;
+
+    public CustomerService(ICustomerRepository customerRepository)
+    {
+        _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
     }
-    
-    public int getId() {
-        return id;
-    }
-    
-    public String getName() {
-        return name;
-    }
-    
-    @Override
-    public String toString() {
-        return "Customer{id=" + id + ", name='" + name + "'}";
+
+    public Customer GetCustomerById(int id)
+    {
+        return _customerRepository.FindCustomerById(id);
     }
 }
 
-public class DependencyInjectionTest {
-    public static void main(String[] args) {
-        CustomerRepository customerRepository = new CustomerRepositoryImpl();
+// Customer.cs
+public class Customer
+{
+    private readonly int _id;
+    private readonly string _name;
+
+    public Customer(int id, string name)
+    {
+        _id = id;
+        _name = name;
+    }
+
+    public int Id => _id;
+
+    public string Name => _name;
+
+    public override string ToString()
+    {
+        return $"Customer{{id={_id}, name='{_name}'}}";
+    }
+}
+
+// Program.cs
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        ICustomerRepository customerRepository = new CustomerRepositoryImpl();
         CustomerService customerService = new CustomerService(customerRepository);
-        
-        Customer customer = customerService.getCustomerById(1);
-        System.out.println(customer);
-        
-        Customer anotherCustomer = customerService.getCustomerById(2);
-        System.out.println(anotherCustomer);
+
+        Customer customer = customerService.GetCustomerById(1);
+        Console.WriteLine(customer);
+
+        Customer anotherCustomer = customerService.GetCustomerById(2);
+        Console.WriteLine(anotherCustomer);
     }
 }
