@@ -1,96 +1,111 @@
-class Student {
-    private String name;
-    private String id;
-    private String grade;
-    
-    public Student(String name, String id, String grade) {
-        this.name = name;
-        this.id = id;
-        this.grade = grade;
+using System;
+
+// Student.cs
+public class Student
+{
+    private string _name;
+    private string _id;
+    private string _grade;
+
+    public Student(string name, string id, string grade)
+    {
+        _name = name;
+        _id = id;
+        _grade = grade;
     }
-    
-    public String getName() {
-        return name;
+
+    public string Name
+    {
+        get => _name;
+        set => _name = value;
     }
-    
-    public void setName(String name) {
-        this.name = name;
+
+    public string Id
+    {
+        get => _id;
+        set => _id = value;
     }
-    
-    public String getId() {
-        return id;
-    }
-    
-    public void setId(String id) {
-        this.id = id;
-    }
-    
-    public String getGrade() {
-        return grade;
-    }
-    
-    public void setGrade(String grade) {
-        this.grade = grade;
+
+    public string Grade
+    {
+        get => _grade;
+        set => _grade = value;
     }
 }
 
-class StudentView {
-    public void displayStudentDetails(String studentName, String studentId, String studentGrade) {
-        System.out.println("Student: ");
-        System.out.println("Name: " + studentName);
-        System.out.println("ID: " + studentId);
-        System.out.println("Grade: " + studentGrade);
+// StudentView.cs
+public class StudentView
+{
+    public void DisplayStudentDetails(string studentName, string studentId, string studentGrade)
+    {
+        Console.WriteLine("Student: ");
+        Console.WriteLine($"Name: {studentName}");
+        Console.WriteLine($"ID: {studentId}");
+        Console.WriteLine($"Grade: {studentGrade}");
     }
 }
 
-class StudentController {
-    private Student model;
-    private StudentView view;
-    
-    public StudentController(Student model, StudentView view) {
-        this.model = model;
-        this.view = view;
+// StudentController.cs
+public class StudentController
+{
+    private readonly Student _model;
+    private readonly StudentView _view;
+
+    public StudentController(Student model, StudentView view)
+    {
+        _model = model ?? throw new ArgumentNullException(nameof(model));
+        _view = view ?? throw new ArgumentNullException(nameof(view));
     }
-    
-    public void setStudentName(String name) {
-        model.setName(name);
+
+    public void SetStudentName(string name)
+    {
+        _model.Name = name;
     }
-    
-    public String getStudentName() {
-        return model.getName();
+
+    public string GetStudentName()
+    {
+        return _model.Name;
     }
-    
-    public void setStudentId(String id) {
-        model.setId(id);
+
+    public void SetStudentId(string id)
+    {
+        _model.Id = id;
     }
-    
-    public String getStudentId() {
-        return model.getId();
+
+    public string GetStudentId()
+    {
+        return _model.Id;
     }
-    
-    public void setStudentGrade(String grade) {
-        model.setGrade(grade);
+
+    public void SetStudentGrade(string grade)
+    {
+        _model.Grade = grade;
     }
-    
-    public String getStudentGrade() {
-        return model.getGrade();
+
+    public string GetStudentGrade()
+    {
+        return _model.Grade;
     }
-    
-    public void updateView() {
-        view.displayStudentDetails(model.getName(), model.getId(), model.getGrade());
+
+    public void UpdateView()
+    {
+        _view.DisplayStudentDetails(_model.Name, _model.Id, _model.Grade);
     }
 }
 
-public class MVCTest {
-    public static void main(String[] args) {
+// Program.cs
+public class Program
+{
+    public static void Main(string[] args)
+    {
         Student model = new Student("John Doe", "12345", "A");
         StudentView view = new StudentView();
         StudentController controller = new StudentController(model, view);
-        
-        controller.updateView();
-        
-        controller.setStudentName("Jane Smith");
-        controller.setStudentGrade("A+");
-        controller.updateView();
+
+        controller.UpdateView();
+
+        controller.SetStudentName("Jane Smith");
+        controller.SetStudentGrade("A+");
+        controller.UpdateView();
     }
 }
