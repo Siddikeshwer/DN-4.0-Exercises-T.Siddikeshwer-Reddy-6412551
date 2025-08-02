@@ -1,0 +1,25 @@
+.container {
+  padding: 30px;
+  font-family: Arial, sans-serif;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 30px;
+}
+
+.flex-container > div {
+  padding: 20px;
+  border-right: 3px solid green;
+  width: 30%;
+}
+
+.flex-container > div:last-child {
+  border-right: none;
+}
+
+h2 {
+  font-weight: bold;
+  color: black;
+}
